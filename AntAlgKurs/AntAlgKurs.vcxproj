@@ -131,7 +131,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Ant.cpp" />
+    <ClCompile Include="AntPathEdge.cpp" />
+    <ClCompile Include="AntPathManager.cpp" />
+    <ClCompile Include="AntPathNode.cpp" />
+    <ClCompile Include="AntSystem.cpp" />
     <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Ant.h" />
+    <ClInclude Include="AntPathEdge.h" />
+    <ClInclude Include="AntPathManager.h" />
+    <ClInclude Include="AntPathNode.h" />
+    <ClInclude Include="AntSystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
