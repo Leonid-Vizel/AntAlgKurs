@@ -14,8 +14,9 @@ public:
 	AntPathNode* GetLastNode();
 	void Reset(AntPathNode* node);
 	AntPathEdge* ChooseNextEdge();
-	std::vector<AntPathEdge*> GetRemainingEdges();
+	std::vector<AntPathEdge*> GetAllowedEdges();
 	void EmitPheromones();
+	std::string GetPathString();
 	double GetLength();
 	void Iterate();
 };

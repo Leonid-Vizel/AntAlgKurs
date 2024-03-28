@@ -1,5 +1,7 @@
 #include "AntSystem.h"
 #include <vector>
+#include <sstream>
+#include <string>
 
 Ant::Ant(AntSystem* system)
 {
@@ -15,7 +17,7 @@ void Ant::Iterate() {
 }
 
 AntPathEdge* Ant::ChooseNextEdge() {
-	const auto remaining = GetRemainingEdges();
+	const auto remaining = GetAllowedEdges();
 	std::vector<double> desires;
 	double sum = 0;
 	for (const auto edge : remaining)
@@ -24,7 +26,7 @@ AntPathEdge* Ant::ChooseNextEdge() {
 		sum += amount;
 		desires.push_back(amount);
 	}
-	double randomize = std::rand() / RAND_MAX;
+	double randomize = (double)std::rand() / RAND_MAX;
 	for (int i = 0; i < desires.size(); i++)
 	{
 		const auto desire = desires[i];
@@ -38,7 +40,7 @@ AntPathEdge* Ant::ChooseNextEdge() {
 	return remaining[remaining.size()-1];
 }
 
-std::vector<AntPathEdge*> Ant::GetRemainingEdges() {
+std::vector<AntPathEdge*> Ant::GetAllowedEdges() {
 	auto last = GetLastNode();
 	std::vector<AntPathEdge*> remainingNodes;
 	for (const auto systemNode : System->Nodes)
@@ -87,6 +89,23 @@ void Ant::Reset(AntPathNode* node) {
 
 double Ant::GetLength() {
 	double sum = 0;
+	for (const auto edge : History) {
+		sum += edge->Length;
+	}
+	return sum;
+}
+
+std::string Ant::GetPathString() {
+
+	std::ostringstream result;
+	if (begin != end)
+		result << *begin++;
+	while (begin != end)
+		result << separator << *begin++;
+	return result.str();
+
+
+
 	for (const auto edge : History) {
 		sum += edge->Length;
 	}

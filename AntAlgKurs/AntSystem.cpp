@@ -50,6 +50,8 @@ void AntSystem::PerformIteration()
 		const auto length = ant->GetLength();
 		if (MinLenth > length)
 		{
+			MinLengthPath = 
+			
 			MinLenth = length;
 		}
 	}
