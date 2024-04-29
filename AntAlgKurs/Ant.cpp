@@ -1,5 +1,6 @@
 #include "AntSystem.h"
 #include <vector>
+#include <random>
 #include <sstream>
 #include <string>
 
@@ -26,7 +27,9 @@ AntPathEdge* Ant::ChooseNextEdge() {
 		sum += amount;
 		desires.push_back(amount);
 	}
-	double randomize = (double)std::rand() / RAND_MAX;
+	
+	std::uniform_int_distribution<int> dis(0, 1);
+	double randomize = dis(System->RandomGenerator);
 	for (int i = 0; i < desires.size(); i++)
 	{
 		const auto desire = desires[i];
@@ -92,24 +95,19 @@ double Ant::GetLength() {
 	for (const auto edge : History) {
 		sum += edge->Length;
 	}
+	sum += System->Manager->GetEdge(Visited[Visited.size()-1], Visited[0])->Length;
 	return sum;
 }
 
 std::string Ant::GetPathString() {
-
+	std::string separator = "-";
 	std::ostringstream result;
-	if (begin != end)
-		result << *begin++;
-	while (begin != end)
-		result << separator << *begin++;
-	return result.str();
 
-
-
-	for (const auto edge : History) {
-		sum += edge->Length;
+	for (const auto node : Visited) {
+		result << node->Index << separator;
 	}
-	return sum;
+	result << Visited[0]->Index;
+	return result.str();
 }
 
 void Ant::EmitPheromones() {

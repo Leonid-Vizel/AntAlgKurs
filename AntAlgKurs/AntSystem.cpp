@@ -1,6 +1,7 @@
 #include "AntSystem.h"
 #include <random>
 #include <thread>
+#include <vector>
 #include <iostream>
 
 AntSystem::AntSystem(int ants, int nodes)
@@ -15,15 +16,21 @@ AntSystem::AntSystem(int ants, int nodes)
 		Ants.push_back(ant);
 	}
 
-	std::random_device rd;
-	std::mt19937 rng(rd());
-	std::uniform_int_distribution<int> uniX(0, Width);
-	std::uniform_int_distribution<int> uniY(0, Height);
-	for (int i = 0; i < nodes; i++)
-	{
-		AntPathNode* node = new AntPathNode(this, i, uniX(rng), uniY(rng));
-		Nodes.push_back(node);
-	}
+	GenerateRandomNodes(nodes);
+
+	//std::vector<std::pair<int, int>> posVec = {
+	//	std::make_pair(50, 50),
+	//	std::make_pair(100, 50),
+	//	std::make_pair(150, 50),
+	//	std::make_pair(1750, 50),
+	//	std::make_pair(1750, 100),
+	//	std::make_pair(1750, 150),
+	//	std::make_pair(1750, 800),
+	//	std::make_pair(1750, 850),
+	//	std::make_pair(100, 850),
+	//	std::make_pair(50, 850) };
+	//ReadPreDescripedNodes(posVec);
+
 	Manager = new AntPathManager(this);
 
 	for (int i = 0; i < nodes; i++)
@@ -42,17 +49,41 @@ AntSystem::AntSystem(int ants, int nodes)
 	}
 }
 
+std::mt19937& AntSystem::GetRandomEngine() {
+	static std::mt19937 gen(RandomDevice());
+	return gen;
+}
+
+void AntSystem::GenerateRandomNodes(int nodes) {
+	std::uniform_int_distribution<int> uniX(0, Width);
+	std::uniform_int_distribution<int> uniY(0, Height);
+	for (int i = 0; i < nodes; i++)
+	{
+		AntPathNode* node = new AntPathNode(this, i, uniX(RandomGenerator), uniY(RandomGenerator));
+		Nodes.push_back(node);
+	}
+}
+
+void AntSystem::ReadPreDescripedNodes(std::vector<std::pair<int, int>> positions) {
+	for (int i = 0; i < positions.size(); i++)
+	{
+		const auto position = positions[i];
+		AntPathNode* node = new AntPathNode(this, i, position.first, position.second);
+		Nodes.push_back(node);
+	}
+}
+
 void AntSystem::PerformIteration()
 {
 	CurrentIteration++;
 	for (const auto ant : Ants) {
 		ant->Iterate();
-		const auto length = ant->GetLength();
-		if (MinLenth > length)
+		CurrentLength = ant->GetLength();
+		CurrentPath = ant->GetPathString();
+		if (MinLenth > CurrentLength)
 		{
-			MinLengthPath = 
-			
-			MinLenth = length;
+			MinLenth = CurrentLength;
+			MinLengthPath = CurrentPath;
 		}
 	}
 	Manager->EvaporatePheromones();
@@ -73,22 +104,36 @@ void AntSystem::DrawIteration() {
 };
 
 void AntSystem::DrawNodes() {
-
 	for (const auto& node : Nodes) {
 		sf::CircleShape circle(nodeRadius);
 		circle.setFillColor(sf::Color::Blue);
 		circle.setPosition(*node->Position);
 		circle.setOrigin(circle.getRadius(), circle.getRadius());
 		Window->draw(circle);
+
+		sf::Text text(std::to_string(node->Index), Font, 20);
+		sf::FloatRect textRect = text.getLocalBounds();
+		text.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
+		text.setPosition(*node->Position);
+		Window->draw(text);
 	}
 };
 
 void AntSystem::DrawCounter() {
-	sf::Text counter;
-	counter.setString("I: " + std::to_string(CurrentIteration) + " M: (" + std::to_string(MinLenth) + ")");
-	counter.setCharacterSize(15);
-	counter.setFillColor(sf::Color::White);
-	counter.setOutlineColor(sf::Color::White);
-	counter.setFont(Font);
-	Window->draw(counter);
+	sf::Text counter1;
+	counter1.setString("I: " + std::to_string(CurrentIteration) + " M: (" + std::to_string(MinLenth) + " (" + MinLengthPath + ")" + ")");
+	counter1.setCharacterSize(15);
+	counter1.setFillColor(sf::Color::White);
+	counter1.setOutlineColor(sf::Color::White);
+	counter1.setFont(Font);
+	Window->draw(counter1);
+
+	sf::Text counter2;
+	counter2.setString("CURR: (" + std::to_string(CurrentLength) + " (" + CurrentPath + ")" + ")");
+	counter2.setCharacterSize(15);
+	counter2.setFillColor(sf::Color::White);
+	counter2.setOutlineColor(sf::Color::White);
+	counter2.setFont(Font);
+	counter2.setPosition(0, 20);
+	Window->draw(counter2);
 };

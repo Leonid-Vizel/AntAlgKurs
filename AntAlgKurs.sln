@@ -5,6 +5,8 @@ VisualStudioVersion = 17.8.34309.116
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AntAlgKurs", "AntAlgKurs\AntAlgKurs.vcxproj", "{6560C838-6C15-4A1B-911E-84AC6333C9B2}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SimpleBruteForce", "SimpleBruteForce\SimpleBruteForce.vcxproj", "{EC2EECD6-1D4C-4EFC-93F1-C3F1E1F38768}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,14 @@ Global
 		{6560C838-6C15-4A1B-911E-84AC6333C9B2}.Release|x64.Build.0 = Release|x64
 		{6560C838-6C15-4A1B-911E-84AC6333C9B2}.Release|x86.ActiveCfg = Release|Win32
 		{6560C838-6C15-4A1B-911E-84AC6333C9B2}.Release|x86.Build.0 = Release|Win32
+		{EC2EECD6-1D4C-4EFC-93F1-C3F1E1F38768}.Debug|x64.ActiveCfg = Debug|x64
+		{EC2EECD6-1D4C-4EFC-93F1-C3F1E1F38768}.Debug|x64.Build.0 = Debug|x64
+		{EC2EECD6-1D4C-4EFC-93F1-C3F1E1F38768}.Debug|x86.ActiveCfg = Debug|Win32
+		{EC2EECD6-1D4C-4EFC-93F1-C3F1E1F38768}.Debug|x86.Build.0 = Debug|Win32
+		{EC2EECD6-1D4C-4EFC-93F1-C3F1E1F38768}.Release|x64.ActiveCfg = Release|x64
+		{EC2EECD6-1D4C-4EFC-93F1-C3F1E1F38768}.Release|x64.Build.0 = Release|x64
+		{EC2EECD6-1D4C-4EFC-93F1-C3F1E1F38768}.Release|x86.ActiveCfg = Release|Win32
+		{EC2EECD6-1D4C-4EFC-93F1-C3F1E1F38768}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
