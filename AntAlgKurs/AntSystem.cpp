@@ -4,32 +4,39 @@
 #include <vector>
 #include <iostream>
 
-AntSystem::AntSystem(int ants, int nodes)
+AntSystem::AntSystem(int standartAnts = 8, int eliteAnts = 2, int nodes = 10)
 {
 	std::srand(static_cast<unsigned int>(std::time(nullptr)));
 	Font.loadFromFile(fontPath);
 	Window = new sf::RenderWindow(sf::VideoMode(Width, Height), "Ant optimisation");
+	EliteAntsCount = eliteAnts;
+	StandartAntsCount = standartAnts;
 
-	for (int i = 0; i < ants; i++)
+	for (int i = 0; i < standartAnts; i++)
 	{
-		Ant* ant = new Ant(this);
+		Ant* ant = new Ant(this, false);
+		Ants.push_back(ant);
+	}
+	for (int i = 0; i < eliteAnts; i++)
+	{
+		Ant* ant = new Ant(this, true);
 		Ants.push_back(ant);
 	}
 
-	GenerateRandomNodes(nodes);
+	//GenerateRandomNodes(nodes);
 
-	//std::vector<std::pair<int, int>> posVec = {
-	//	std::make_pair(50, 50),
-	//	std::make_pair(100, 50),
-	//	std::make_pair(150, 50),
-	//	std::make_pair(1750, 50),
-	//	std::make_pair(1750, 100),
-	//	std::make_pair(1750, 150),
-	//	std::make_pair(1750, 800),
-	//	std::make_pair(1750, 850),
-	//	std::make_pair(100, 850),
-	//	std::make_pair(50, 850) };
-	//ReadPreDescripedNodes(posVec);
+	std::vector<std::pair<int, int>> posVec = {
+		std::make_pair(50, 50),
+		std::make_pair(100, 50),
+		std::make_pair(150, 50),
+		std::make_pair(1750, 50),
+		std::make_pair(1750, 100),
+		std::make_pair(1750, 150),
+		std::make_pair(1750, 800),
+		std::make_pair(1750, 850),
+		std::make_pair(100, 850),
+		std::make_pair(50, 850) };
+	ReadPreDescripedNodes(posVec);
 
 	Manager = new AntPathManager(this);
 
@@ -73,8 +80,17 @@ void AntSystem::ReadPreDescripedNodes(std::vector<std::pair<int, int>> positions
 	}
 }
 
+AntPathNode* AntSystem::GetStartingNode() {
+	return Nodes[IterationStartIndex];
+};
+
 void AntSystem::PerformIteration()
 {
+	if (!FixedStartIndex)
+	{
+		std::uniform_int_distribution<int> dis(0, Nodes.size()-1);
+		IterationStartIndex = dis(RandomGenerator);
+	}
 	CurrentIteration++;
 	for (const auto ant : Ants) {
 		ant->Iterate();
@@ -84,6 +100,10 @@ void AntSystem::PerformIteration()
 		{
 			MinLenth = CurrentLength;
 			MinLengthPath = CurrentPath;
+			if (EliteAntsCount > 0)
+			{
+				BestEdges.swap(ant->History);
+			}
 		}
 	}
 	Manager->EvaporatePheromones();
@@ -111,7 +131,7 @@ void AntSystem::DrawNodes() {
 		circle.setOrigin(circle.getRadius(), circle.getRadius());
 		Window->draw(circle);
 
-		sf::Text text(std::to_string(node->Index), Font, 20);
+		sf::Text text(std::to_string(node->Index), Font, nodeRadius*2);
 		sf::FloatRect textRect = text.getLocalBounds();
 		text.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
 		text.setPosition(*node->Position);
@@ -128,12 +148,15 @@ void AntSystem::DrawCounter() {
 	counter1.setFont(Font);
 	Window->draw(counter1);
 
-	sf::Text counter2;
-	counter2.setString("CURR: (" + std::to_string(CurrentLength) + " (" + CurrentPath + ")" + ")");
-	counter2.setCharacterSize(15);
-	counter2.setFillColor(sf::Color::White);
-	counter2.setOutlineColor(sf::Color::White);
-	counter2.setFont(Font);
-	counter2.setPosition(0, 20);
-	Window->draw(counter2);
+	if (EliteAntsCount == 0)
+	{
+		sf::Text counter2;
+		counter2.setString("CURR: (" + std::to_string(CurrentLength) + " (" + CurrentPath + ")" + ")");
+		counter2.setCharacterSize(15);
+		counter2.setFillColor(sf::Color::White);
+		counter2.setOutlineColor(sf::Color::White);
+		counter2.setFont(Font);
+		counter2.setPosition(0, 20);
+		Window->draw(counter2);
+	}
 };

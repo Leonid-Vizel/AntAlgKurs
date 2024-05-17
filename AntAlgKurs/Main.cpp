@@ -3,7 +3,7 @@
 
 using namespace std;
 
-AntSystem System(10, 10);
+AntSystem System(8, 2, 10);
 
 int main() {
 	while (System.Window->isOpen())

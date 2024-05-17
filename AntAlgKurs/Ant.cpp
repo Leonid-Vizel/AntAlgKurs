@@ -4,20 +4,25 @@
 #include <sstream>
 #include <string>
 
-Ant::Ant(AntSystem* system)
+Ant::Ant(AntSystem* system, bool elite = false)
 {
 	System = system;
+	Elite = elite;
 }
 
 void Ant::Iterate() {
-	Reset(System->Nodes[0]);
-	while (Visited.size() != System->Nodes.size()) {
+	Reset(System->GetStartingNode());
+	while (Visited.size() != System->Nodes.size() + 1) {
 		const auto edge = ChooseNextEdge();
 		Follow(edge);
 	}
 }
 
 AntPathEdge* Ant::ChooseNextEdge() {
+	if (Elite && System->BestEdges.size() > 0)
+	{
+		return ChooseNextEdgeElite();
+	}
 	const auto remaining = GetAllowedEdges();
 	std::vector<double> desires;
 	double sum = 0;
@@ -27,8 +32,8 @@ AntPathEdge* Ant::ChooseNextEdge() {
 		sum += amount;
 		desires.push_back(amount);
 	}
-	
-	std::uniform_int_distribution<int> dis(0, 1);
+
+	std::uniform_real_distribution<double> dis(0, 1);
 	double randomize = dis(System->RandomGenerator);
 	for (int i = 0; i < desires.size(); i++)
 	{
@@ -40,7 +45,19 @@ AntPathEdge* Ant::ChooseNextEdge() {
 			return remaining[i];
 		}
 	}
-	return remaining[remaining.size()-1];
+	return remaining[remaining.size() - 1];
+}
+
+AntPathEdge* Ant::ChooseNextEdgeElite() {
+	auto lastEdge = GetLastEdge();
+	bool found = (lastEdge == NULL);
+	for (const auto bestEdge : System->BestEdges) {
+		if (found)
+		{
+			return bestEdge;
+		}
+		found = (lastEdge == bestEdge);
+	}
 }
 
 std::vector<AntPathEdge*> Ant::GetAllowedEdges() {
@@ -59,11 +76,25 @@ std::vector<AntPathEdge*> Ant::GetAllowedEdges() {
 			remainingNodes.push_back(edge);
 		}
 	}
+	if (remainingNodes.size() == 0)
+	{
+		auto edge = System->Manager->GetEdge(last, System->GetStartingNode());
+		remainingNodes.push_back(edge);
+		return remainingNodes;
+	}
 	return remainingNodes;
 }
 
 AntPathNode* Ant::GetLastNode() {
 	return Visited[Visited.size() - 1];
+}
+
+AntPathEdge* Ant::GetLastEdge() {
+	if (History.size() == 0)
+	{
+		return NULL;
+	}
+	return History[History.size() - 1];
 }
 
 void Ant::Visit(AntPathNode* node) {
@@ -95,7 +126,6 @@ double Ant::GetLength() {
 	for (const auto edge : History) {
 		sum += edge->Length;
 	}
-	sum += System->Manager->GetEdge(Visited[Visited.size()-1], Visited[0])->Length;
 	return sum;
 }
 
@@ -106,7 +136,6 @@ std::string Ant::GetPathString() {
 	for (const auto node : Visited) {
 		result << node->Index << separator;
 	}
-	result << Visited[0]->Index;
 	return result.str();
 }
 

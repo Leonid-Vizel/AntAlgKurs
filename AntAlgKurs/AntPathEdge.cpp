@@ -19,5 +19,5 @@ void AntPathEdge::EvaporatePheromone() {
 }
 
 double AntPathEdge::CalculateDesire() {
-	return std::pow(Pheromone, System->Alpha) * std::pow(Length, System->Beta);
+	return std::pow(Pheromone, System->Alpha) * std::pow(1.0/Length, System->Beta);
 }
