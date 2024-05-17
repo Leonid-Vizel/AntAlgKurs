@@ -17,13 +17,13 @@ public:
 
 	const bool FixedStartIndex = true; // Фиксированная стартовая позиция муравья
 	int IterationStartIndex = 0; // Стартовая позиция муравья на итерации
-	const int DelayMs = 100; // Задержка поска каждой итерации в мс
+	const int DelayMs = 10; // Задержка поска каждой итерации в мс
 	const double EvaporationRate = 0.1; // Коэффициент испарения феромонов
-	const double MinPheromone = 0.1; // Минимальное количество феромона
+	const double MinPheromone = 0.01; // Минимальное количество феромона
 	const double MaxPheromone = 0.9; // Максимальное количество феромона
 	const double Alpha = 1; // Вес феромона
 	const double Beta = 2; // Вес эвристической информации
-	const double Q = 110.0; // Выледяемое количество феромона
+	const double Q = 19.7; // Выледяемое количество феромона
 	const int Height = 900; // Высота окна и максимальный Y узла
 	const int Width = 1800; // Ширина окна и максимальный X узла
 	const float nodeRadius = 10.0f; // 

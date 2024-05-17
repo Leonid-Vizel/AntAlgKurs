@@ -23,9 +23,9 @@ AntSystem::AntSystem(int standartAnts = 8, int eliteAnts = 2, int nodes = 10)
 		Ants.push_back(ant);
 	}
 
-	//GenerateRandomNodes(nodes);
+	GenerateRandomNodes(nodes);
 
-	std::vector<std::pair<int, int>> posVec = {
+	/*std::vector<std::pair<int, int>> posVec = {
 		std::make_pair(50, 50),
 		std::make_pair(100, 50),
 		std::make_pair(150, 50),
@@ -36,7 +36,7 @@ AntSystem::AntSystem(int standartAnts = 8, int eliteAnts = 2, int nodes = 10)
 		std::make_pair(1750, 850),
 		std::make_pair(100, 850),
 		std::make_pair(50, 850) };
-	ReadPreDescripedNodes(posVec);
+	ReadPreDescripedNodes(posVec);*/
 
 	Manager = new AntPathManager(this);
 

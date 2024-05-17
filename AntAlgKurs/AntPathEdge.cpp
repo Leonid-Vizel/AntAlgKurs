@@ -7,7 +7,7 @@ AntPathEdge::AntPathEdge(AntSystem* system, AntPathNode* start, AntPathNode* end
 	Start = start;
 	End = end;
 	Length = sqrt(pow((end->Position->x - start->Position->x), 2) + pow((end->Position->y - start->Position->y), 2));
-	Pheromone = system->MaxPheromone;
+	Pheromone = system->MinPheromone;
 }
 
 void AntPathEdge::EvaporatePheromone() {
