@@ -54,6 +54,16 @@ AntSystem::AntSystem(int standartAnts = 8, int eliteAnts = 2, int nodes = 10)
 			node1->Edges.push_back(edge);
 		}
 	}
+
+	std::vector<std::vector<double>> edges =
+	{
+		{0, 10, 12, 11, 14},
+		{10, 0, 13, 15, 8},
+		{12, 13, 0, 9, 14},
+		{11, 15, 9, 0, 16},
+		{14, 8, 14, 16, 0},
+	};
+	ReadPreDescripedEdges(edges);
 }
 
 std::mt19937& AntSystem::GetRandomEngine() {
@@ -80,6 +90,21 @@ void AntSystem::ReadPreDescripedNodes(std::vector<std::pair<int, int>> positions
 	}
 }
 
+void AntSystem::ReadPreDescripedEdges(std::vector<std::vector<double>> lengths) {
+	for (auto i = 0; i < lengths.size(); i++) {
+		auto row = lengths[i];
+		auto node1 = Nodes[i];
+		for (auto j = 0; j < row.size(); j++) {
+			if (i == j)
+			{
+				continue;
+			}
+			auto node2 = Nodes[j];
+			Manager->GetEdge(node1, node2)->Length = row[j];
+		}
+	}
+}
+
 AntPathNode* AntSystem::GetStartingNode() {
 	return Nodes[IterationStartIndex];
 };
@@ -88,7 +113,7 @@ void AntSystem::PerformIteration()
 {
 	if (!FixedStartIndex)
 	{
-		std::uniform_int_distribution<int> dis(0, Nodes.size()-1);
+		std::uniform_int_distribution<int> dis(0, Nodes.size() - 1);
 		IterationStartIndex = dis(RandomGenerator);
 	}
 	CurrentIteration++;
@@ -131,7 +156,7 @@ void AntSystem::DrawNodes() {
 		circle.setOrigin(circle.getRadius(), circle.getRadius());
 		Window->draw(circle);
 
-		sf::Text text(std::to_string(node->Index), Font, nodeRadius*2);
+		sf::Text text(std::to_string(node->Index), Font, nodeRadius * 2);
 		sf::FloatRect textRect = text.getLocalBounds();
 		text.setOrigin(textRect.left + textRect.width / 2.0f, textRect.top + textRect.height / 2.0f);
 		text.setPosition(*node->Position);
